@@ -30,7 +30,7 @@ void drawState(Player X)
 }
 void playState(Player X)
 {
-
+	
 }
 int min(int a, int b)
 {
