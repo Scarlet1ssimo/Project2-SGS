@@ -12,3 +12,8 @@ Basic function without a linked list.
 
 Created the main deck!
 
+## 1.2.0
+
+10.30
+
+A playable version with only Strike, Dodge, Peach, Wine cards:)
