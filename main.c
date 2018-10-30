@@ -15,7 +15,7 @@ Dodge					2
 Peach					3
 Wine					4
 
-Duel					50 
+Duel					5
 Dismantle				6
 Snatch					7
 Borrowed sword			8
