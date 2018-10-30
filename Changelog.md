@@ -17,3 +17,9 @@ Created the main deck!
 10.30
 
 A playable version with only Strike, Dodge, Peach, Wine cards:)
+
+## 1.2.1
+
+10.31
+
+Added Duel, Dismantle, Snatch:)

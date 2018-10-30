@@ -5,6 +5,7 @@
 #define MAXN 120
 #define DEBUG
 #define TRAINING
+#define HUMAN 2
 #define forP(P) for (Player *Now = P->Nxt; Now->Nb != P->Nb; Now = Now->Nxt)
 /*
 Cards:					type:
@@ -14,7 +15,7 @@ Dodge					2
 Peach					3
 Wine					4
 
-Duel					5
+Duel					50 
 Dismantle				6
 Snatch					7
 Borrowed sword			8
@@ -45,7 +46,7 @@ typedef struct Plyr
 	int Bot;
 	int hlt, hltLv;		//Health point;Health Level
 	int ID;				//Identity: 2:general 1:mercenary
-	int ctry;			//Counttry
+	int ctry;			//Country
 	int Rvld;			//Revealed 0:Unrevealed 1:Revealed
 	Deck Hnd, Eqp, Ftz; //Hand Zone;Equipment Zone;Fate Zone
 	struct Plyr *Nxt;   //Linked List
@@ -135,7 +136,10 @@ int ASK(Player *X, int y)
 			else
 			{
 				int opt;
-				printf("Use a DODGE?");
+				if (y == 2)
+					printf("Use a DODGE?\n");
+				if (y == 1)
+					printf("Use a STRIKE?\n");
 				scanf("%d", &opt);
 				return opt;
 			}
@@ -197,7 +201,6 @@ void calcDamage(Player *Y, int Dam, Game *G)
 void STRIKE(Player *X, Player *Y, Game *G)
 {
 	printf("%d STRIKES %d\n", X->Nb, Y->Nb);
-	USE(&X->Hnd, 1, &G->Dscd);
 	if (ASK(Y, 2))
 		printf("%d DODGES\n", Y->Nb),
 			USE(&Y->Hnd, 2, &G->Dscd);
@@ -208,8 +211,6 @@ void STRIKE(Player *X, Player *Y, Game *G)
 void WINE_STRIKE(Player *X, Player *Y, Game *G)
 {
 	printf("%d STRIKES %d\n", X->Nb, Y->Nb);
-	USE(&X->Hnd, 4, &G->Dscd);
-	USE(&X->Hnd, 1, &G->Dscd);
 	if (ASK(Y, 2))
 		printf("%d DODGES\n", Y->Nb),
 			USE(&Y->Hnd, 2, &G->Dscd);
@@ -220,9 +221,54 @@ void WINE_STRIKE(Player *X, Player *Y, Game *G)
 void PEACH(Player *X, Game *G)
 {
 	printf("%d PEACHES\n", X->Nb);
-	USE(&X->Hnd, 3, &G->Dscd);
 	X->hlt = min(X->hlt + 1, X->hltLv);
 	printf("%d->hlt=%d\n", X->Nb, X->hlt);
+}
+void DUEL(Player *X, Player *Y, Game *G)
+{
+	printf("%d DUELS %d\n", X->Nb, Y->Nb);
+	if (ASK(Y, 1))
+	{
+		USE(&Y->Hnd, 1, &G->Dscd);
+		DUEL(Y, X, G);
+	}
+	else
+	{
+		calcDamage(Y, 1, G);
+		printf("%d->hlt=%d\n", Y->Nb, Y->hlt);
+	}
+}
+void DISMANTLE(Player *X, Player *Y, Game *G)
+{
+	if (X->Bot)
+	{
+		DISCARD(&Y->Hnd, rd(0, Y->Hnd.n - 1), &G->Dscd);
+	}
+	else
+	{
+		int f;
+		printf("DISMANTLE:\n");
+		scanf("%d", &f);
+		while (f < 0 && Y->Hnd.n <= f)
+			scanf("%d", &f);
+		DISCARD(&Y->Hnd, f, &G->Dscd);
+	}
+}
+void SNATCH(Player *X, Player *Y, Game *G)
+{
+	if (X->Bot)
+	{
+		DISCARD(&Y->Hnd, rd(0, Y->Hnd.n - 1), &X->Hnd);
+	}
+	else
+	{
+		int f;
+		printf("SNATCH:\n");
+		scanf("%d", &f);
+		while (f < 0 && Y->Hnd.n <= f)
+			scanf("%d", &f);
+		DISCARD(&Y->Hnd, f, &X->Hnd);
+	}
 }
 
 //CONTROL
@@ -275,6 +321,7 @@ void playState(Player *X, Game *G)
 						else
 						{
 							cnt++;
+							DISCARD(&X->Hnd, i, &G->Dscd);
 							STRIKE(X, Now, G);
 							break;
 						}
@@ -285,20 +332,53 @@ void playState(Player *X, Game *G)
 
 			case 3:
 				if (X->hlt < X->hltLv)
+					DISCARD(&X->Hnd, i, &G->Dscd);
 					PEACH(X, G);
 				break;
 
 			case 4:
 
 				break;
-			default:
+			case 5:
+				forP(X)
+				{
+					if (Now->ctry == X->ctry && Now->ID == 2 && X->ID == 2)
+						;
+					else
+						DISCARD(&X->Hnd, i, &G->Dscd);
+						DUEL(X, Now, G);
+					break;
+				}
+				break;
+			case 6:
+				forP(X)
+				{
+					if (Now->ctry == X->ctry && Now->ID == 2 && X->ID == 2)
+						;
+					else if (Now->Hnd.n)
+						DISCARD(&X->Hnd, i, &G->Dscd);
+						DISMANTLE(X, Now, G);
+					break;
+				}
+				break;
+			case 7:
+				forP(X)
+				{
+					int dis = calcDist(X, Now);
+					if (Now->ctry == X->ctry && Now->ID == 2 && X->ID == 2)
+						;
+					else if (Now->Hnd.n && dis <= 1)
+						DISCARD(&X->Hnd, i, &G->Dscd);
+						SNATCH(X, Now, G);
+					break;
+				}
 				break;
 			}
 		}
 	}
 	else
 	{
-		for (int x, y, z, cnt = 0;!Terminal(X);)
+		for (int x, y, z, cnt = 0; !Terminal(X);)
 		{
 			system("cls");
 			printGame(X);
@@ -307,34 +387,67 @@ void playState(Player *X, Game *G)
 			if (x < -1 || x >= X->Hnd.n)
 				break;
 			if (x == -1)
+			{
 				Reveal(X, G);
+				break;
+			}
+				
 			Player *Target;
 			switch (X->Hnd.a[x].type)
 			{
+			case 1:
+				scanf("%d", &z);
+				if (cnt)
+					break;
+				Target = getFromNb(X, z);
+				if (Target == NULL)
+					break;
+				if (calcDist(X, Target) <= 1)
+					cnt++, DISCARD(&X->Hnd, x, &G->Dscd), STRIKE(X, Target, G);
+				break;
+			case 2:
+				break;
+			case 3:
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				PEACH(X, G);
+				break;
 			case 4:
 				scanf("%d", &y);
 				if (X->Hnd.a[y].type != 1)
 					break;
 				scanf("%d", &z);
-				//	if (cnt)break;
+				if (cnt)
+					break;
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 					break;
 				if (calcDist(X, Target) <= 1)
-					cnt++, WINE_STRIKE(X, Target, G);
+					cnt++, DISCARD(&X->Hnd, x, &G->Dscd), DISCARD(&X->Hnd, y, &G->Dscd),
+						WINE_STRIKE(X, Target, G);
 				break;
-			case 1:
+			case 5:
 				scanf("%d", &z);
-				//	if (cnt)break;
+				Target = getFromNb(X, z);
+				if (Target == NULL)
+					break;
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				DUEL(X, Target, G);
+				break;
+			case 6:
+				scanf("%d", &z);
+				Target = getFromNb(X, z);
+				if (Target == NULL)
+					break;
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				DISMANTLE(X, Target, G);
+				break;
+			case 7:
+				scanf("%d", &z);
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 					break;
 				if (calcDist(X, Target) <= 1)
-					cnt++, STRIKE(X, Target, G);
-				break;
-			case 3:
-				PEACH(X, G);
-			default:
+					DISCARD(&X->Hnd, x, &G->Dscd), SNATCH(X, Target, G);
 				break;
 			}
 		}
@@ -375,7 +488,7 @@ void printPlayer(Player *X)
 {
 	printf("Player %d\n", X->Nb);
 	printf("Health %d/%d\n", X->hlt, X->hltLv);
-		
+
 #ifdef TRAINING
 	puts(X->Rvld ? "Revealed" : "Unrevealed");
 	printf("Identity with Country %d %d\n", X->ID, X->ctry);
@@ -426,7 +539,7 @@ Game *initGame(int n, int argc, char *file)
 void initPlayer(Player *P, int i, Game *G)
 {
 	P->Nb = i;
-	P->Bot = i == 2 ? 0 : 1;
+	P->Bot = i == HUMAN ? 0 : 1;
 	P->hltLv = rd(3, 5);
 	P->hlt = P->hltLv;
 	P->ID = 0;
@@ -495,9 +608,9 @@ void createDeck(Deck *D, int argc, char *file)
 				D->a[i] = (Card){rd(1, 13), rd(1, 4), 3};
 			if (!strcmp(S, "Wine"))
 				D->a[i] = (Card){rd(1, 13), rd(1, 4), 4};
-			if (!strcmp(S, "Dismatle"))
-				D->a[i] = (Card){rd(1, 13), rd(1, 4), 5};
 			if (!strcmp(S, "Duel"))
+				D->a[i] = (Card){rd(1, 13), rd(1, 4), 5};
+			if (!strcmp(S, "Dismantle"))
 				D->a[i] = (Card){rd(1, 13), rd(1, 4), 6};
 			if (!strcmp(S, "Snatch"))
 				D->a[i] = (Card){rd(1, 13), rd(1, 4), 7};
