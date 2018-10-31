@@ -23,3 +23,9 @@ A playable version with only Strike, Dodge, Peach, Wine cards:)
 10.31
 
 Added Duel, Dismantle, Snatch:)
+
+## 1.2.5
+
+10.31
+
+I don't know why it works, but it works.
