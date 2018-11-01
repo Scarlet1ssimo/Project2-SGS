@@ -5,7 +5,7 @@
 #define MAXN 200
 #define DEBUG 1
 #define TRAINING
-#define HUMAN 0
+#define HUMAN 2
 #define _FILE 0
 #define forP(P) for (Player *Now = P->Nxt; Now->Nb != P->Nb; Now = Now->Nxt)
 /*
@@ -77,6 +77,7 @@ int Terminal(Player *X);
 void Perform(Game *G, Player *Head);
 Game *initGame(int n, int argc, char *file);
 void printGame(Player *X);
+void printPlayer(Player *X);
 //CARD
 void createDeck(Deck *D, int argc, char *file);
 void clearDeck(Deck *D);
@@ -93,9 +94,9 @@ int main(int argc, char **argv)
 #ifdef _FILE
 //	freopen("error.log", "w", stdout);
 #endif
-//	long _233 = time(NULL),;
-		long _233 = 1540994424l;
-	fprintf(stderr,"srand: %ld\n", _233);
+	long _233 = time(NULL);
+	//	long _233 = 1540994424l;
+	fprintf(stderr, "srand: %ld\n", _233);
 	/*
 		1540992487:endless
 	*/
@@ -174,6 +175,7 @@ int ASK(Player *X, int y)
 					printf("Use a DODGE?\n");
 				if (y == 1)
 					printf("Use a STRIKE?\n");
+				printPlayer(X);
 				scanf("%d", &opt);
 				return opt;
 			}
@@ -484,7 +486,7 @@ void drawState(Player *X, Game *G)
 	DRAW(&X->Hnd, &G->Main, &G->Dscd);
 	DRAW(&X->Hnd, &G->Main, &G->Dscd);
 }
-
+#define CLS system("cls")
 void playState(Player *X, Game *G)
 {
 	if (X->Bot)
@@ -611,7 +613,7 @@ void playState(Player *X, Game *G)
 				forP(X)
 				{
 					int dis = calcDist(X, Now);
-					if (OPP(X, Now) && Now->Hnd.n && dis <= 1)
+					if (OPP(X, Now) && dis <= 1)
 					{
 						printf("%d MAKES %d STARVE\n", X->Nb, Now->Nb);
 						DISCARD(&X->Hnd, i, &Now->Ftz);
@@ -620,21 +622,21 @@ void playState(Player *X, Game *G)
 				}
 				break;
 			case 17:
-				printf("%d EQUIPPED BINOCULARS", X->Nb);
+				printf("%d EQUIPPED BINOCULARS\n", X->Nb);
 				if (_ASK(&X->Eqp, 17))
 					DISCARD(&X->Hnd, i, &G->Dscd);
 				else
 					DISCARD(&X->Hnd, i, &X->Eqp);
 				break;
 			case 18:
-				printf("%d EQUIPPED BOW", X->Nb);
+				printf("%d EQUIPPED BOW\n", X->Nb);
 				if (_ASK(&X->Eqp, 18))
 					DISCARD(&X->Hnd, i, &G->Dscd);
 				else
 					DISCARD(&X->Hnd, i, &X->Eqp);
 				break;
 			case 19:
-				printf("%d EQUIPPED HORSE", X->Nb);
+				printf("%d EQUIPPED HORSE\n", X->Nb);
 				if (_ASK(&X->Eqp, 19))
 					DISCARD(&X->Hnd, i, &G->Dscd);
 				else
@@ -650,16 +652,17 @@ void playState(Player *X, Game *G)
 	{
 		for (int x, y, z, cnt = 0; !Terminal(X);)
 		{
-			system("cls");
+			CLS;
 			printGame(X);
 			puts("Commence Your Performance");
+			puts("Card Number(0 to n-1)");
 			scanf("%d", &x);
 			if (x < -1 || x >= X->Hnd.n)
 				break;
 			if (x == -1)
 			{
 				Reveal(X, G);
-				break;
+				continue;
 			}
 
 			Player *Target;
@@ -673,12 +676,13 @@ void playState(Player *X, Game *G)
 				if (Target == NULL)
 					break;
 				if (calcDist(X, Target) <= 1)
-					cnt++, DISCARD(&X->Hnd, x, &G->Dscd), STRIKE(X, Target, G);
+					cnt++, DISCARD(&X->Hnd, x, &G->Dscd), CLS,STRIKE(X, Target, G);
 				break;
 			case 2:
 				break;
 			case 3:
 				DISCARD(&X->Hnd, x, &G->Dscd);
+				CLS;
 				PEACH(X, G);
 				break;
 			case 4:
@@ -719,6 +723,93 @@ void playState(Player *X, Game *G)
 				if (calcDist(X, Target) <= 1)
 					DISCARD(&X->Hnd, x, &G->Dscd), SNATCH(X, Target, G);
 				break;
+			case 8:
+				scanf("%d", &z);
+				Target = getFromNb(X, z);
+				if (Target == NULL)
+					break;
+				if (_ASK(&Target->Eqp, 18))
+				{
+					printf("%d BORRORWS %d's SWORD\n", X->Nb, Target->Nb);
+					DISCARD(&X->Hnd, x, &G->Dscd);
+					if (!BORROWEDSWORD(Target, G))
+						puts("届不到"), USE(&Target->Eqp, 18, &X->Hnd);
+				}
+				break;
+			case 9:
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				ARROWBARRAGE(X, G);
+				break;
+			case 10:
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				INVASION(X, G);
+				break;
+			case 11:
+				printf("%d PEACH GARDEN\n", X->Nb);
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				PEACH(X, G);
+				forP(X)
+					PEACH(Now, G);
+				break;
+			case 12:
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				printf("%d SOMETHING FOR NOTHING\n", X->Nb);
+				DRAW(&X->Hnd, &G->Main, &G->Dscd);
+				DRAW(&X->Hnd, &G->Main, &G->Dscd);
+				break;
+			case 13:
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				HARVEST(X, G);
+				break;
+			case 14:
+				printf("%d LIGHTING\n", X->Nb);
+				DISCARD(&X->Hnd, x, &X->Ftz);
+				break;
+			case 15:
+				scanf("%d", &z);
+				Target = getFromNb(X, z);
+				if (Target == NULL)
+					break;
+				if (!Target->Hnd.n)
+					break;
+				printf("%d MAKES %d DROWN IN HAPPINESS\n", X->Nb, Target->Nb);
+				DISCARD(&X->Hnd, x, &Target->Ftz);
+				break;
+			case 16:
+				scanf("%d", &z);
+				Target = getFromNb(X, z);
+				if (Target == NULL)
+					break;
+				if (!Target->Hnd.n)
+					break;
+				if (calcDist(X, Target) <= 1)
+				{
+					printf("%d MAKES %d STARVE\n", X->Nb, Target->Nb);
+					DISCARD(&X->Hnd, x, &Target->Ftz);
+				}
+			case 17:
+				printf("%d EQUIPPED BINOCULARS\n", X->Nb);
+				if (_ASK(&X->Eqp, 17))
+					DISCARD(&X->Hnd, x, &G->Dscd);
+				else
+					DISCARD(&X->Hnd, x, &X->Eqp);
+				break;
+			case 18:
+				printf("%d EQUIPPED BOW\n", X->Nb);
+				if (_ASK(&X->Eqp, 18))
+					DISCARD(&X->Hnd, x, &G->Dscd);
+				else
+					DISCARD(&X->Hnd, x, &X->Eqp);
+				break;
+			case 19:
+				printf("%d EQUIPPED HORSE\n", X->Nb);
+				if (_ASK(&X->Eqp, 19))
+					DISCARD(&X->Hnd, x, &G->Dscd);
+				else
+					DISCARD(&X->Hnd, x, &X->Eqp);
+				break;
+
+				break;
 			}
 		}
 	}
@@ -750,8 +841,29 @@ int Terminal(Player *X)
 void printDeck(Deck *D)
 {
 	printf("%d: ", D->n);
+	char Nm[][20] = {
+		"NULL",
+		"Strike",
+		"Dodge",
+		"Peach",
+		"Wine",
+		"Duel",
+		"Dismantle",
+		"Snatch",
+		"Borrowed",
+		"Arrow",
+		"Invasion",
+		"Garden",
+		"Something",
+		"Harvest",
+		"Lighting",
+		"Happiness",
+		"Starvation",
+		"Binoculars",
+		"Bow",
+		"Horse"};
 	for (int i = 0; i < D->n; i++)
-		printf("%d ", D->a[i].type);
+		printf("%d%s ", i, Nm[D->a[i].type]);
 	puts("");
 }
 void printPlayer(Player *X)
@@ -779,7 +891,7 @@ void printPlayer(Player *X)
 void printGame(Player *X)
 {
 	puts("\n#########Print Game########\n");
-	while(X->hlt==0)
+	while (X->hlt == 0)
 		X = X->Nxt;
 	printPlayer(X);
 	forP(X)

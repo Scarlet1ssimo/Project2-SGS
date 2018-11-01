@@ -29,3 +29,9 @@ Added Duel, Dismantle, Snatch:)
 10.31
 
 I don't know why it works, but it works.
+
+## 1.2.6
+
+11.1
+
+Improved CLI
