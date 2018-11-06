@@ -1,24 +1,26 @@
 #include "SGS.h"
 
+
 int main(int argc, char **argv)
 {
+	
+#ifdef _WIN32
 	freopen("err.log", "w", stderr);
-#ifdef _FILE
-//	freopen("error.log", "w", stdout);
-#endif
 	long _233 = time(NULL);
 	fprintf(stderr, "srand: %ld\n", _233);
+	fclose(stderr);
 	srand(_233);
-	int n = 5;
+	int n = PLAYERS_NUMBER;
 	Game *G = initGame(n, argc, argv[2]);
 	Player *Head = initPlayers(n, G);
 	Perform(G, Head);
-	fclose(stderr);
+	
+#endif
 	return 0;
 }
 
 void fateState(Player *X, Game *G)
-{
+{ 
 	for (int i = X->Ftz.n - 1; i >= 0; i--)
 	{
 		if (X->Ftz.a[i].type == 14)
@@ -192,8 +194,8 @@ void playState(Player *X, Game *G)
 			}
 		}
 		printGame(X);
-		system("pause");
-		system("cls");
+//		system("pause");
+//		system("cls");
 	}
 	else
 	{
@@ -223,7 +225,7 @@ void playState(Player *X, Game *G)
 				if (Target == NULL)
 					break;
 				if (calcDist(X, Target) <= 1)
-					cnt++, DISCARD(&X->Hnd, x, &G->Dscd), CLS,STRIKE(X, Target, G);
+					cnt++, DISCARD(&X->Hnd, x, &G->Dscd), CLS, STRIKE(X, Target, G);
 				break;
 			case 2:
 				break;
@@ -366,6 +368,7 @@ void discardState(Player *X, Game *G)
 	while (X->Hnd.n > X->hlt)
 		DISCARD(&X->Hnd, rd(0, X->Hnd.n - 1), &G->Dscd);
 }
+#define MESSAGE()
 void Perform(Game *G, Player *Head)
 {
 	Player *Now = Head;
@@ -374,6 +377,8 @@ void Perform(Game *G, Player *Head)
 		printf("\n***Round*** Alive:%d\n", G->n);
 
 		fateState(Now, G);
+		if(Now->hlt<=0)
+			continue;
 		if (Now->Skip & 2)
 			Now->Skip ^= 2;
 		else

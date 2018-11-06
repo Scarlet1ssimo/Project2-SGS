@@ -23,9 +23,9 @@ int HELP(Player *Y, Game *G)
 	{
 		if (Now->Bot == 1)
 		{
-			if (Now->Rvld == 1 && Now->ctry == Y->ctry)
-				if (ASK(Now, 2))
-					return USE(&Now->Hnd, 2, &G->Dscd), 1;
+			if (Now->ctry == Y->ctry)
+				if (ASK(Now, 3))
+					return USE(&Now->Hnd, 3, &G->Dscd), 1;
 		}
 		else
 		{
@@ -155,7 +155,8 @@ void SNATCH(Player *X, Player *Y, Game *G)
 Card FATE(Game *G)
 {
 	Card c = G->Main.a[G->Main.n - 1];
-	DISCARD(&G->Main, G->Main.n - 1, &G->Dscd);
+	DRAW(&G->Dscd, &G->Main, &G->Dscd);
+//	DISCARD(&G->Main, G->Main.n - 1, &G->Dscd);
 	return c;
 }
 void FATE_LIGHTING(Player *X, Game *G, int i)

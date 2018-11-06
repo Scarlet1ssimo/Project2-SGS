@@ -1,5 +1,20 @@
 #include "SGS.h"
 
+void _MESSAGE(const char S[])
+{
+	static char LOG[MAXN][MAXN];
+	static int N = 0;
+
+#ifdef _WIN32
+	if (N < 5)
+	{
+	//	mvprintw()
+
+	}
+		
+
+#endif
+}
 void printDeck(Deck *D)
 {
 	printf("%d: ", D->n);

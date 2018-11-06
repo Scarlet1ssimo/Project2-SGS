@@ -41,3 +41,9 @@ Improved CLI
 11.3
 
 Splitted to multi-files
+
+## 1.3.0
+
+11.6
+
+Fixed several bugs

@@ -1,12 +1,13 @@
 #include "SGS.h"
 
+
 void DRAW(Deck *D, Deck *G, Deck *GG)
 {
 	if (!G->n)
 	{
-		Deck *tmp = GG;
-		GG = G;
-		G = tmp;
+		Deck tmp = *GG;
+		*GG = *G;
+		*G = tmp;
 		clearDeck(GG);
 	}
 	D->a[D->n++] = G->a[--G->n];
@@ -104,11 +105,8 @@ int Terminal(Player *X)
 			return 0;
 	return 1;
 }
-int min(int a, int b)
-{
-	return a < b ? a : b;
-}
 int rd(int L, int R)
 {
 	return rand() % (R - L + 1) + L;
 }
+int min(int a, int b) { return a < b ? a : b; }
