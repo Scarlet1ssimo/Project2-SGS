@@ -2,16 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ncurses.h>
+
 
 
 #define MAXN 200
+#define MAXL 80
 #define DEBUG 1
 #define TRAINING
 #define HUMAN 0
 #define _FILE 0
+#define JB 80
 #define forP(P) for (Player *Now = P->Nxt; Now->Nb != P->Nb; Now = Now->Nxt)
 #define CLS system("cls")
-#define PLAYERS_NUMBER 10
+#define PLAYERS_NUMBER 7
 
 typedef struct _Card
 {
@@ -38,17 +42,30 @@ typedef struct Plyr
 	struct Plyr *Nxt;   //Linked List
 } Player;
 
+typedef struct PNL
+{
+    WINDOW *W;
+    char LOGS[MAXN][MAXL];
+    int n,N;
+}Panel;
+
 typedef struct Gm
 {
 	Deck Main, Dscd; //Main deck
 	int N, n;		 //Total/Live Players
-
+	Panel GM,IF;
 } Game;
 
+
+
 //print
-void printDeck(Deck *D);
-void printPlayer(Player *X);
-void printGame(Player *X);
+void printDeck(Deck *D,Game *G);
+void _pD(Deck *D,Game *G);
+void printPlayer(Player *X,Game *G);
+void printGame(Player *X,Game *G);
+int MSG(Panel *P,const char *fmt, ...);
+void _MESSAGE(Panel *P,char S[]);
+void SHOW(Panel *P);
 
 //basic
 void DRAW(Deck *D, Deck *G, Deck *GG);
@@ -56,11 +73,11 @@ void DISCARD(Deck *D, int k, Deck *G);
 void USE(Deck *D, int use, Deck *G);
 Player *getFromNb(Player *X, int id);
 int OPP(Player *X, Player *Y);
-int ASK(Player *X, int y);
+int ASK(Player *X, int y, Game *G);
 int _ASK(Deck *D, int y);
 int __ASK(Deck *D, int y);
 int calcDist(Player *X, Player *Y);
-int Terminal(Player *X);
+int Terminal(Player *X, Game *G);
 int rd(int L, int R);
 int min(int a, int b);
 
@@ -74,7 +91,7 @@ void WINE_STRIKE(Player *X, Player *Y, Game *G);
 void PEACH(Player *X, Game *G);
 void DUEL(Player *X, Player *Y, Game *G);
 void DISMANTLE(Player *X, Player *Y, Game *G);
-void _SNATCH(Player *X, Deck *Y);
+void _SNATCH(Player *X, Deck *Y, Game *G);
 void SNATCH(Player *X, Player *Y, Game *G);
 Card FATE(Game *G);
 void FATE_LIGHTING(Player *X, Game *G, int i);
@@ -86,6 +103,9 @@ void HARVEST(Player *X, Game *G);
 int BORROWEDSWORD(Player *Y, Game *G);
 
 //initialize
+void initPanel(Panel *P,int h,int w,int sy,int sx);
+void cP(Panel *P);
+void clearPanel(Panel *P,int L);
 Game *initGame(int n, int argc, char *file);
 void initPlayer(Player *P, int i, Game *G);
 Player *initPlayers(int n, Game *G);

@@ -47,3 +47,9 @@ Splitted to multi-files
 11.6
 
 Fixed several bugs
+
+## 1.4.0
+
+11.7
+
+Improved UI for Linux without input.

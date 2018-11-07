@@ -40,7 +40,7 @@ int OPP(Player *X, Player *Y)
 		return 0;
 	return 1;
 }
-int ASK(Player *X, int y)
+int ASK(Player *X, int y,Game *G)
 {
 	for (int i = 0; i < X->Hnd.n; i++)
 		if (X->Hnd.a[i].type == y)
@@ -51,10 +51,10 @@ int ASK(Player *X, int y)
 			{
 				int opt;
 				if (y == 2)
-					printf("Use a DODGE?\n");
+					MSG(&G->GM,"Use a DODGE?\n");
 				if (y == 1)
-					printf("Use a STRIKE?\n");
-				printPlayer(X);
+					MSG(&G->GM,"Use a STRIKE?\n");
+				printPlayer(X,G);
 				scanf("%d", &opt);
 				return opt;
 			}
@@ -86,7 +86,18 @@ int calcDist(Player *X, Player *Y)
 		d2++;
 	return min(1, min(d1, d2) - _ASK(&X->Eqp, 17) - _ASK(&X->Eqp, 18) * 2 + _ASK(&Y->Eqp, 19));
 }
-int Terminal(Player *X)
+void WIN(Player *X,Game *G)
+{
+	if(X->ID==1)
+	{
+		MSG(&G->IF,"Mercenary %d wins\n",X->Nb);
+	}
+	else
+	{
+		MSG(&G->IF,"Country %d wins\n",X->ctry);
+	}
+}
+int Terminal(Player *X,Game *G)
 {
 	int A[MAXN], tot = 0;
 	A[tot++] = X->ctry;
@@ -99,11 +110,11 @@ int Terminal(Player *X)
 			return 0;
 	}
 	if (tot == 1)
-		return 1;
+		return WIN(X,G),1;
 	for (int i = 0; i < tot; i++)
 		if (A[i] != A[1])
 			return 0;
-	return 1;
+	return WIN(X,G),1;
 }
 int rd(int L, int R)
 {

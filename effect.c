@@ -14,9 +14,9 @@ int HELP(Player *Y, Game *G)
 {
 	if (Y->Bot == 1)
 	{
-		if (ASK(Y, 4))
+		if (ASK(Y, 4,G))
 			return USE(&Y->Hnd, 4, &G->Dscd), 1;
-		else if (ASK(Y, 3))
+		else if (ASK(Y, 3,G))
 			return USE(&Y->Hnd, 3, &G->Dscd), 1;
 	}
 	forP(Y)
@@ -24,12 +24,12 @@ int HELP(Player *Y, Game *G)
 		if (Now->Bot == 1)
 		{
 			if (Now->ctry == Y->ctry)
-				if (ASK(Now, 3))
+				if (ASK(Now, 3,G))
 					return USE(&Now->Hnd, 3, &G->Dscd), 1;
 		}
 		else
 		{
-			if (ASK(Now, 2))
+			if (ASK(Now, 2,G))
 				return USE(&Now->Hnd, 2, &G->Dscd), 1;
 		}
 	}
@@ -37,7 +37,7 @@ int HELP(Player *Y, Game *G)
 }
 void DISABLE(Player *Y, Game *G)
 {
-	printf("%d GG\n", Y->Nb);
+	MSG(&G->IF,"%d GG\n", Y->Nb);
 	forP(Y)
 	{
 		if (Now->Nxt->Nb == Y->Nb)
@@ -64,34 +64,34 @@ void calcDamage(Player *Y, int Dam, Game *G)
 }
 void STRIKE(Player *X, Player *Y, Game *G)
 {
-	printf("%d STRIKES %d\n", X->Nb, Y->Nb);
-	if (ASK(Y, 2))
-		printf("%d DODGES\n", Y->Nb),
+	MSG(&G->IF,"%d STRIKES %d\n", X->Nb, Y->Nb);
+	if (ASK(Y, 2,G))
+		MSG(&G->IF,"%d DODGES\n", Y->Nb),
 			USE(&Y->Hnd, 2, &G->Dscd);
 	else
 		calcDamage(Y, 1, G),
-			printf("%d->hlt=%d\n", Y->Nb, Y->hlt);
+			MSG(&G->IF,"%d->hlt=%d\n", Y->Nb, Y->hlt);
 }
 void WINE_STRIKE(Player *X, Player *Y, Game *G)
 {
-	printf("%d STRIKES %d\n", X->Nb, Y->Nb);
-	if (ASK(Y, 2))
-		printf("%d DODGES\n", Y->Nb),
+	MSG(&G->IF,"%d STRIKES %d\n", X->Nb, Y->Nb);
+	if (ASK(Y, 2,G))
+		MSG(&G->IF,"%d DODGES\n", Y->Nb),
 			USE(&Y->Hnd, 2, &G->Dscd);
 	else
 		calcDamage(Y, 2, G),
-			printf("%d->hlt=%d\n", Y->Nb, Y->hlt);
+			MSG(&G->IF,"%d->health=%d\n", Y->Nb, Y->hlt);
 }
 void PEACH(Player *X, Game *G)
 {
-	printf("%d PEACHES\n", X->Nb);
+	MSG(&G->IF,"%d PEACHES\n", X->Nb);
 	X->hlt = min(X->hlt + 1, X->hltLv);
-	printf("%d->hlt=%d\n", X->Nb, X->hlt);
+	MSG(&G->IF,"%d->health=%d\n", X->Nb, X->hlt);
 }
 void DUEL(Player *X, Player *Y, Game *G)
 {
-	printf("%d DUELS %d\n", X->Nb, Y->Nb);
-	if (ASK(Y, 1))
+	MSG(&G->IF,"%d DUELS %d\n", X->Nb, Y->Nb);
+	if (ASK(Y, 1, G))
 	{
 		USE(&Y->Hnd, 1, &G->Dscd);
 		DUEL(Y, X, G);
@@ -99,12 +99,12 @@ void DUEL(Player *X, Player *Y, Game *G)
 	else
 	{
 		calcDamage(Y, 1, G);
-		printf("%d->hlt=%d\n", Y->Nb, Y->hlt);
+		MSG(&G->IF,"%d->health=%d\n", Y->Nb, Y->hlt);
 	}
 }
 void DISMANTLE(Player *X, Player *Y, Game *G)
 {
-	printf("%d DISMANTLES %d\n", X->Nb, Y->Nb);
+	MSG(&G->IF,"%d DISMANTLES %d\n", X->Nb, Y->Nb);
 	if (X->Bot)
 	{
 		DISCARD(&Y->Hnd, rd(0, Y->Hnd.n - 1), &G->Dscd);
@@ -112,23 +112,25 @@ void DISMANTLE(Player *X, Player *Y, Game *G)
 	else
 	{
 		int f;
-		printf("DISMANTLE:\n");
+		MSG(&G->IF,"DISMANTLE:\n");
 		scanf("%d", &f);
 		while (f < 0 && Y->Hnd.n <= f)
 			scanf("%d", &f);
 		DISCARD(&Y->Hnd, f, &G->Dscd);
 	}
 }
-void _SNATCH(Player *X, Deck *Y)
+void _SNATCH(Player *X, Deck *Y, Game *G)
 {
 	if (X->Bot)
 	{
-		DISCARD(Y, rd(0, Y->n - 1), &X->Hnd);
+		int h=rd(0, Y->n - 1);
+		MSG(&G->IF,"%d GETS %d\n",X->Nb,Y->a[h].type);
+		DISCARD(Y, h, &X->Hnd);
 	}
 	else
 	{
 		int f;
-		printf("GET:\n");
+		MSG(&G->GM,"GET:\n");
 		scanf("%d", &f);
 		while (f < 0 && Y->n <= f)
 			scanf("%d", &f);
@@ -137,7 +139,7 @@ void _SNATCH(Player *X, Deck *Y)
 }
 void SNATCH(Player *X, Player *Y, Game *G)
 {
-	printf("%d SNATCHES %d\n", X->Nb, Y->Nb);
+	MSG(&G->IF,"%d SNATCHES %d\n", X->Nb, Y->Nb);
 	if (X->Bot)
 	{
 		DISCARD(&Y->Hnd, rd(0, Y->Hnd.n - 1), &X->Hnd);
@@ -145,7 +147,7 @@ void SNATCH(Player *X, Player *Y, Game *G)
 	else
 	{
 		int f;
-		printf("SNATCH:\n");
+		MSG(&G->IF,"SNATCH:\n");
 		scanf("%d", &f);
 		while (f < 0 && Y->Hnd.n <= f)
 			scanf("%d", &f);
@@ -163,10 +165,10 @@ void FATE_LIGHTING(Player *X, Game *G, int i)
 {
 	Card C = FATE(G);
 	if (C.col == 4 && 2 <= C.num && C.num <= 9)
-		puts("LIGHTING: YES!!!"),
+		MSG(&G->IF,"LIGHTING: YES!!!\n"),
 			DISCARD(&X->Ftz, i, &G->Dscd), calcDamage(X, 3, G);
 	else
-		puts("LIGHTING: No"),
+		MSG(&G->IF,"LIGHTING: No\n"),
 			DISCARD(&X->Ftz, i, &X->Ftz);
 }
 void FATE_DROWNINHAPPINESS(Player *X, Game *G, int i)
@@ -174,61 +176,62 @@ void FATE_DROWNINHAPPINESS(Player *X, Game *G, int i)
 	Card C = FATE(G);
 	DISCARD(&X->Ftz, i, &G->Dscd);
 	if (C.col != 3)
-		puts("DROWN IN HAPPINESS: YES!!!"), X->Skip |= 1;
+		MSG(&G->IF,"DROWN IN HAPPINESS: YES!!!\n"), X->Skip |= 1;
 	else
-		puts("DROWN IN HAPPINESS: No");
+		MSG(&G->IF,"DROWN IN HAPPINESS: No\n");
 }
 void FATE_STARVATION(Player *X, Game *G, int i)
 {
 	Card C = FATE(G);
 	DISCARD(&X->Ftz, i, &G->Dscd);
 	if (C.col != 1)
-		puts("STARVATION: YES!!!"), X->Skip |= 2;
+		MSG(&G->IF,"STARVATION: YES!!!\n"), X->Skip |= 2;
 	else
-		puts("STARVATION: No");
+		MSG(&G->IF,"STARVATION: No\n");
 }
 void ARROWBARRAGE(Player *X, Game *G)
 {
-	printf("%d ARROWBAARAGES\n", X->Nb);
+	MSG(&G->IF,"%d ARROWBAARAGES\n", X->Nb);
 	forP(X)
 	{
-		if (ASK(Now, 2))
+		if (ASK(Now, 2,G))
 		{
 			USE(&Now->Hnd, 2, &G->Dscd);
 		}
 		else
 		{
 			calcDamage(Now, 1, G);
-			printf("%d->hlt=%d\n", Now->Nb, Now->hlt);
+			MSG(&G->IF,"%d->health=%d\n", Now->Nb, Now->hlt);
 		}
 	}
 }
 void INVASION(Player *X, Game *G)
 {
-	printf("%d INVADES\n", X->Nb);
+	MSG(&G->IF,"%d INVADES\n", X->Nb);
 	forP(X)
 	{
-		if (ASK(Now, 1))
+		if (ASK(Now, 1,G))
 		{
 			USE(&Now->Hnd, 1, &G->Dscd);
 		}
 		else
 		{
 			calcDamage(Now, 1, G);
-			printf("%d->hlt=%d\n", Now->Nb, Now->hlt);
+			MSG(&G->IF,"%d->health=%d\n", Now->Nb, Now->hlt);
 		}
 	}
 }
 void HARVEST(Player *X, Game *G)
 {
-	printf("%d HARVESTS\n", X->Nb);
+	MSG(&G->IF,"%d HARVESTS\n", X->Nb);
 	Deck BTF;
 	clearDeck(&BTF);
 	for (int i = 0; i < G->n; i++)
 		DRAW(&BTF, &G->Main, &G->Dscd);
-	_SNATCH(X, &BTF);
+	_pD(&BTF,G);
+	_SNATCH(X, &BTF,G);
 	forP(X)
-		_SNATCH(Now, &BTF);
+		_SNATCH(Now, &BTF,G);
 }
 int BORROWEDSWORD(Player *Y, Game *G)
 {

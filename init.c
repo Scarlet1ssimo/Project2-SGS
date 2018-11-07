@@ -1,4 +1,22 @@
 #include "SGS.h"
+
+void initPanel(Panel *P,int h,int w,int sy,int sx)
+{
+    P->W=newwin(h,w,sy,sx);
+    wrefresh(P->W);
+    clearPanel(P,h);
+}
+void cP(Panel *P)
+{
+	P->n=0;
+    memset(P->LOGS,0,sizeof(P->LOGS));
+}
+void clearPanel(Panel *P,int L)
+{
+    P->n=0;
+    P->N=L;
+    memset(P->LOGS,0,sizeof(P->LOGS));
+}
 Game *initGame(int n, int argc, char *file)
 {
 	Game *G = (Game *)malloc(sizeof(Game));
@@ -6,6 +24,13 @@ Game *initGame(int n, int argc, char *file)
 	G->n = n;
 	createDeck(&G->Main, argc, file);
 	clearDeck(&G->Dscd);
+	
+	int K=LINES;
+	initPanel(&G->GM,K-1,COLS-JB,0,0);
+    initPanel(&G->IF,K-1,JB,0,COLS-JB);
+	fprintf(stderr,"%d %d %d %d\n",K-1,COLS-JB,0,0);
+	fprintf(stderr,"%d %d %d %d\n",K-1,JB,0,COLS-JB);
+
 	return G;
 }
 
