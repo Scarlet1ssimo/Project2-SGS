@@ -1,5 +1,6 @@
 #include "SGS.h"
 
+#ifdef linux
 void initPanel(Panel *P,int h,int w,int sy,int sx)
 {
     P->W=newwin(h,w,sy,sx);
@@ -17,6 +18,7 @@ void clearPanel(Panel *P,int L)
     P->N=L;
     memset(P->LOGS,0,sizeof(P->LOGS));
 }
+#endif
 Game *initGame(int n, int argc, char *file)
 {
 	Game *G = (Game *)malloc(sizeof(Game));
@@ -24,20 +26,24 @@ Game *initGame(int n, int argc, char *file)
 	G->n = n;
 	createDeck(&G->Main, argc, file);
 	clearDeck(&G->Dscd);
-	
+#ifdef linux
 	int K=LINES;
 	initPanel(&G->GM,K-1,COLS-JB,0,0);
     initPanel(&G->IF,K-1,JB,0,COLS-JB);
 	fprintf(stderr,"%d %d %d %d\n",K-1,COLS-JB,0,0);
 	fprintf(stderr,"%d %d %d %d\n",K-1,JB,0,COLS-JB);
-
+#endif
 	return G;
 }
 
 void initPlayer(Player *P, int i, Game *G)
 {
 	P->Nb = i;
+#ifdef DEMO
+	P->Bot = 0;
+#else
 	P->Bot = i == HUMAN ? 0 : 1;
+#endif
 	P->hltLv = rd(3, 5);
 	P->hlt = P->hltLv;
 	P->ID = 0;

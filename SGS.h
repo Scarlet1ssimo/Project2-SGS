@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <ncurses.h>
-
-
+#ifdef linux
+	#include <ncurses.h>
+#endif
 
 #define MAXN 200
 #define MAXL 80
 #define DEBUG 1
 #define TRAINING
-#define HUMAN 0
+#define HUMAN 2
 #define _FILE 0
 #define JB 80
 #define forP(P) for (Player *Now = P->Nxt; Now->Nb != P->Nb; Now = Now->Nxt)
@@ -41,19 +41,21 @@ typedef struct Plyr
 	Deck Hnd, Eqp, Ftz; //Hand Zone;Equipment Zone;Fate Zone
 	struct Plyr *Nxt;   //Linked List
 } Player;
-
+#ifdef linux
 typedef struct PNL
 {
     WINDOW *W;
     char LOGS[MAXN][MAXL];
     int n,N;
 }Panel;
-
+#endif
 typedef struct Gm
 {
 	Deck Main, Dscd; //Main deck
 	int N, n;		 //Total/Live Players
+#ifdef linux
 	Panel GM,IF;
+#endif
 } Game;
 
 
@@ -63,9 +65,11 @@ void printDeck(Deck *D,Game *G);
 void _pD(Deck *D,Game *G);
 void printPlayer(Player *X,Game *G);
 void printGame(Player *X,Game *G);
+#ifdef linux
 int MSG(Panel *P,const char *fmt, ...);
 void _MESSAGE(Panel *P,char S[]);
 void SHOW(Panel *P);
+#endif
 
 //basic
 void DRAW(Deck *D, Deck *G, Deck *GG);
@@ -103,9 +107,11 @@ void HARVEST(Player *X, Game *G);
 int BORROWEDSWORD(Player *Y, Game *G);
 
 //initialize
+#ifdef linux
 void initPanel(Panel *P,int h,int w,int sy,int sx);
 void cP(Panel *P);
 void clearPanel(Panel *P,int L);
+#endif
 Game *initGame(int n, int argc, char *file);
 void initPlayer(Player *P, int i, Game *G);
 Player *initPlayers(int n, Game *G);

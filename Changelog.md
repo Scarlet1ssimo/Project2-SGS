@@ -53,3 +53,9 @@ Fixed several bugs
 11.7
 
 Improved UI for Linux without input.
+
+## 1.4.1
+
+11.9
+
+Merge the Linux and Windows
