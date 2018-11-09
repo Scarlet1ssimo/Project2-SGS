@@ -65,3 +65,9 @@ Merge the Linux and Windows
 11.10
 
 Improved UI for Linux with input.
+
+## 1.4.3
+
+11.10
+
+Tried to adapt to macos

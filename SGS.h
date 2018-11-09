@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#ifdef __APPLE__
+#define PAUSE system("read -n 1 -s -p \"Press any key to continue...\"")
+#endif
 #ifdef linux
-	#include <ncurses.h>
+#include <ncurses.h>
 #endif
 
 #define MAXN 200
@@ -44,30 +47,28 @@ typedef struct Plyr
 #ifdef linux
 typedef struct PNL
 {
-    WINDOW *W;
-    char LOGS[MAXN][MAXL];
-    int n,N;
-}Panel;
+	WINDOW *W;
+	char LOGS[MAXN][MAXL];
+	int n, N;
+} Panel;
 #endif
 typedef struct Gm
 {
 	Deck Main, Dscd; //Main deck
 	int N, n;		 //Total/Live Players
 #ifdef linux
-	Panel GM,IF;
+	Panel GM, IF;
 #endif
 } Game;
 
-
-
 //print
-void printDeck(Deck *D,Game *G);
-void _pD(Deck *D,Game *G);
-void printPlayer(Player *X,Game *G);
-void printGame(Player *X,Game *G);
+void printDeck(Deck *D, Game *G);
+void _pD(Deck *D, Game *G);
+void printPlayer(Player *X, Game *G);
+void printGame(Player *X, Game *G);
 #ifdef linux
-int MSG(Panel *P,const char *fmt, ...);
-void _MESSAGE(Panel *P,char S[]);
+int MSG(Panel *P, const char *fmt, ...);
+void _MESSAGE(Panel *P, char S[]);
 void SHOW(Panel *P);
 #endif
 
@@ -111,9 +112,9 @@ int BORROWEDSWORD(Player *Y, Game *G);
 
 //initialize
 #ifdef linux
-void initPanel(Panel *P,int h,int w,int sy,int sx);
+void initPanel(Panel *P, int h, int w, int sy, int sx);
 void cP(Panel *P);
-void clearPanel(Panel *P,int L);
+void clearPanel(Panel *P, int L);
 #endif
 Game *initGame(int n, int argc, char *file);
 void initPlayer(Player *P, int i, Game *G);

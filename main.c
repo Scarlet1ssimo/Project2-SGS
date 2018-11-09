@@ -3,10 +3,10 @@
 int main(int argc, char **argv)
 {
 #ifdef linux
-    initscr();
-    refresh();
-    noecho();
-    cbreak();
+	initscr();
+	refresh();
+	noecho();
+	cbreak();
 #endif
 
 	freopen("err.log", "w", stderr);
@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 	fprintf(stderr, "srand: %ld\n", _233);
 	fclose(stderr);
 	srand(_233);
-	int n = rd(5,PLAYERS_NUMBER);
+	int n = rd(5, PLAYERS_NUMBER);
 	Game *G = initGame(n, argc, argv[2]);
 	Player *Head = initPlayers(n, G);
 	Perform(G, Head);
@@ -26,6 +26,9 @@ int main(int argc, char **argv)
 #endif
 #ifdef _WIN32
 	system("pause");
+#endif
+#ifdef __APPLE__
+	PAUSE;
 #endif
 	return 0;
 }
@@ -86,7 +89,7 @@ void playState(Player *X, Game *G)
 			case 3:
 				if (X->hlt < X->hltLv)
 					DISCARD(&X->Hnd, i, &G->Dscd),
-				PEACH(X, G);
+						PEACH(X, G);
 				break;
 
 			case 4:
@@ -212,160 +215,158 @@ void playState(Player *X, Game *G)
 			}
 		}
 		printGame(X, G);
-#ifdef _WIN32
-		system("pause");
-		system("cls");
-#endif
 #ifdef linux
 		SHOW(&G->GM);
 		SHOW(&G->IF);
-        MSG(&G->IF,"Press Any Key..\n");
+		MSG(&G->IF, "Press Any Key..\n");
 		getch();
 #endif
 	}
 	else
 	{
-        MSG(&G->IF,"Commence Your Performance\n");
-		MSG(&G->IF,"Card Number(0 to n-1)\n");
-        MSG(&G->IF,"R to Reveal\n");
-        MSG(&G->IF,"G to Break\n");
-		for (int x, y, z, cnt = 0; !Terminal(X,G);)
+		MSG(&G->IF, "Commence Your Performance\n");
+		MSG(&G->IF, "Card Number(0 to n-1)\n");
+		MSG(&G->IF, "R to Reveal\n");
+		MSG(&G->IF, "G to Break\n");
+		MSG(&G->GM, "Your Hand Deck");
+		printDeck(&X->Hnd, G);
+		for (int x, y, z, cnt = 0; !Terminal(X, G);)
 		{
-            cP(&G->GM);
-			printGame(X,G);
-			SHOW(&G->IF),SHOW(&G->GM);
-//			move(LINES,0);
-			char ch=getch();
-			if (ch=='G'||ch=='g')
+			cP(&G->GM);
+			printGame(X, G);
+			SHOW(&G->IF), SHOW(&G->GM);
+			//			move(LINES,0);
+			char ch = getch();
+			if (ch == 'G' || ch == 'g')
 				break;
-			if (ch=='R'||ch=='r')
+			if (ch == 'R' || ch == 'r')
 			{
 				Reveal(X, G);
 				continue;
 			}
-			if(ch<'0'||'9'<ch)
-            {
-                MSG(&G->IF,"Undefined Behavior!\n");
-                continue;
-            }
+			if (ch < '0' || '9' < ch)
+			{
+				MSG(&G->IF, "Undefined Behavior!\n");
+				continue;
+			}
 			Player *Target;
-            x=ch-48;
-            if(x<0||X->Hnd.n<=x)
-            {
-                MSG(&G->IF,"Undefined Behavior!\n");
-                continue;
-            }
+			x = ch - 48;
+			if (x < 0 || X->Hnd.n <= x)
+			{
+				MSG(&G->IF, "Undefined Behavior!\n");
+				continue;
+			}
 			switch (X->Hnd.a[x].type)
 			{
 			case 1:
-				MSG(&G->IF,"You chose a STRIKE, \n");
+				MSG(&G->IF, "You chose a STRIKE, \n");
 				if (cnt)
 				{
-					MSG(&G->IF,"but WINE-STRIKE or STRIKE was used this round!\n");
+					MSG(&G->IF, "but WINE-STRIKE or STRIKE was used this round!\n");
 					break;
 				}
-				MSG(&G->IF,"then choose your target ID\n");
-				z=rdn();
+				MSG(&G->IF, "then choose your target ID\n");
+				z = rdn();
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 				{
-					MSG(&G->IF,"Can't Find!\n");
+					MSG(&G->IF, "Can't Find!\n");
 					break;
 				}
 				if (calcDist(X, Target) <= 1)
 					cnt++, DISCARD(&X->Hnd, x, &G->Dscd), STRIKE(X, Target, G);
 				else
-					MSG(&G->IF,"Can't reach!\n");
+					MSG(&G->IF, "Can't reach!\n");
 				break;
 			case 2:
-				MSG(&G->IF,"A DODGE can't be used\n");
+				MSG(&G->IF, "A DODGE can't be used\n");
 				break;
 			case 3:
 				DISCARD(&X->Hnd, x, &G->Dscd);
 				PEACH(X, G);
 				break;
 			case 4:
-				MSG(&G->IF,"You chose a WINE, \n");
+				MSG(&G->IF, "You chose a WINE, \n");
 				if (cnt)
 				{
-					MSG(&G->IF,"but WINE-STRIKE or STRIKE was used this round!\n");
+					MSG(&G->IF, "but WINE-STRIKE or STRIKE was used this round!\n");
 					break;
 				}
-				MSG(&G->IF,"then choose a STRIKE\n");
-				y=rdn();
+				MSG(&G->IF, "then choose a STRIKE\n");
+				y = rdn();
 				if (X->Hnd.a[y].type != 1)
 				{
-					MSG(&G->IF,"Not a STRIKE!\n");
+					MSG(&G->IF, "Not a STRIKE!\n");
 					break;
 				}
-				z=rdn();
+				z = rdn();
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 				{
-					MSG(&G->IF,"Can't Find!\n");
+					MSG(&G->IF, "Can't Find!\n");
 					break;
 				}
 				if (calcDist(X, Target) <= 1)
 					cnt++, DISCARD(&X->Hnd, x, &G->Dscd), DISCARD(&X->Hnd, y, &G->Dscd), WINE_STRIKE(X, Target, G);
 				else
-					MSG(&G->IF,"Can't reach!\n");
+					MSG(&G->IF, "Can't reach!\n");
 				break;
 			case 5:
-				MSG(&G->IF,"You chose a DUEL, then choose a target\n");
-				z=rdn();
+				MSG(&G->IF, "You chose a DUEL, then choose a target\n");
+				z = rdn();
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 				{
-					MSG(&G->IF,"Can't Find!\n");
+					MSG(&G->IF, "Can't Find!\n");
 					break;
 				}
 				DISCARD(&X->Hnd, x, &G->Dscd);
 				DUEL(X, Target, G);
 				break;
 			case 6:
-				MSG(&G->IF,"You chose a DISMANTLE, then choose a target\n");
-				z=rdn();
+				MSG(&G->IF, "You chose a DISMANTLE, then choose a target\n");
+				z = rdn();
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 				{
-					MSG(&G->IF,"Can't Find!\n");
+					MSG(&G->IF, "Can't Find!\n");
 					break;
 				}
 				DISCARD(&X->Hnd, x, &G->Dscd);
 				DISMANTLE(X, Target, G);
 				break;
 			case 7:
-				MSG(&G->IF,"You chose a SNATCH, then choose a target\n");
-				z=rdn();
+				MSG(&G->IF, "You chose a SNATCH, then choose a target\n");
+				z = rdn();
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 				{
-					MSG(&G->IF,"Can't Find!\n");
+					MSG(&G->IF, "Can't Find!\n");
 					break;
 				}
 				if (calcDist(X, Target) <= 1)
-                {
-                    DISCARD(&X->Hnd, x, &G->Dscd);
-                    SNATCH(X, Target, G);
-                }
-                else
-    				MSG(&G->IF,"Can't reach!\n");
+				{
+					DISCARD(&X->Hnd, x, &G->Dscd);
+					SNATCH(X, Target, G);
+				}
+				else
+					MSG(&G->IF, "Can't reach!\n");
 				break;
 			case 8:
-				MSG(&G->IF,"You chose a BORROWEDSWORD, then choose a target\n");
-				z=rdn();
+				MSG(&G->IF, "You chose a BORROWEDSWORD, then choose a target\n");
+				z = rdn();
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 				{
-					MSG(&G->IF,"Can't Find!\n");
+					MSG(&G->IF, "Can't Find!\n");
 					break;
 				}
 				if (_ASK(&Target->Eqp, 18))
 				{
-					MSG(&G->IF,"%d BORRORWS %d's SWORD\n", X->Nb, Target->Nb);
+					MSG(&G->IF, "%d BORRORWS %d's SWORD\n", X->Nb, Target->Nb);
 					DISCARD(&X->Hnd, x, &G->Dscd);
 					if (!BORROWEDSWORD(Target, G))
-						MSG(&G->IF,"GTMD"), USE(&Target->Eqp, 18, &X->Hnd);
+						MSG(&G->IF, "GTMD"), USE(&Target->Eqp, 18, &X->Hnd);
 				}
 				break;
 			case 9:
@@ -377,7 +378,7 @@ void playState(Player *X, Game *G)
 				INVASION(X, G);
 				break;
 			case 11:
-				MSG(&G->IF,"%d PEACH GARDEN\n", X->Nb);
+				MSG(&G->IF, "%d PEACH GARDEN\n", X->Nb);
 				DISCARD(&X->Hnd, x, &G->Dscd);
 				PEACH(X, G);
 				forP(X)
@@ -385,7 +386,7 @@ void playState(Player *X, Game *G)
 				break;
 			case 12:
 				DISCARD(&X->Hnd, x, &G->Dscd);
-				MSG(&G->IF,"%d SOMETHING FOR NOTHING\n", X->Nb);
+				MSG(&G->IF, "%d SOMETHING FOR NOTHING\n", X->Nb);
 				DRAW(&X->Hnd, &G->Main, &G->Dscd);
 				DRAW(&X->Hnd, &G->Main, &G->Dscd);
 				break;
@@ -394,52 +395,52 @@ void playState(Player *X, Game *G)
 				HARVEST(X, G);
 				break;
 			case 14:
-				MSG(&G->IF,"%d LIGHTING\n", X->Nb);
+				MSG(&G->IF, "%d LIGHTING\n", X->Nb);
 				DISCARD(&X->Hnd, x, &X->Ftz);
 				break;
 			case 15:
-				MSG(&G->IF,"You chose a DROWN IN HAPPINESS, then choose a target\n");
-				z=rdn();
+				MSG(&G->IF, "You chose a DROWN IN HAPPINESS, then choose a target\n");
+				z = rdn();
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 				{
-					MSG(&G->IF,"Can't Find!\n");
+					MSG(&G->IF, "Can't Find!\n");
 					break;
 				}
-				MSG(&G->IF,"%d MAKES %d DROWN IN HAPPINESS\n", X->Nb, Target->Nb);
+				MSG(&G->IF, "%d MAKES %d DROWN IN HAPPINESS\n", X->Nb, Target->Nb);
 				DISCARD(&X->Hnd, x, &Target->Ftz);
 				break;
 			case 16:
-				MSG(&G->IF,"You chose a STARVATION, then choose a target\n");
-				z=rdn();
+				MSG(&G->IF, "You chose a STARVATION, then choose a target\n");
+				z = rdn();
 				Target = getFromNb(X, z);
 				if (Target == NULL)
 				{
-					MSG(&G->IF,"Can't Find!\n");
+					MSG(&G->IF, "Can't Find!\n");
 					break;
 				}
 				if (calcDist(X, Target) <= 1)
 				{
-					MSG(&G->IF,"%d MAKES %d STARVE\n", X->Nb, Target->Nb);
+					MSG(&G->IF, "%d MAKES %d STARVE\n", X->Nb, Target->Nb);
 					DISCARD(&X->Hnd, x, &Target->Ftz);
 				}
-                break;
+				break;
 			case 17:
-				MSG(&G->IF,"%d EQUIPPED BINOCULARS\n", X->Nb);
+				MSG(&G->IF, "%d EQUIPPED BINOCULARS\n", X->Nb);
 				if (_ASK(&X->Eqp, 17))
 					DISCARD(&X->Hnd, x, &G->Dscd);
 				else
 					DISCARD(&X->Hnd, x, &X->Eqp);
 				break;
 			case 18:
-				MSG(&G->IF,"%d EQUIPPED BOW\n", X->Nb);
+				MSG(&G->IF, "%d EQUIPPED BOW\n", X->Nb);
 				if (_ASK(&X->Eqp, 18))
 					DISCARD(&X->Hnd, x, &G->Dscd);
 				else
 					DISCARD(&X->Hnd, x, &X->Eqp);
 				break;
 			case 19:
-				MSG(&G->IF,"%d EQUIPPED HORSE\n", X->Nb);
+				MSG(&G->IF, "%d EQUIPPED HORSE\n", X->Nb);
 				if (_ASK(&X->Eqp, 19))
 					DISCARD(&X->Hnd, x, &G->Dscd);
 				else
@@ -448,7 +449,7 @@ void playState(Player *X, Game *G)
 
 				break;
 			}
-        }
+		}
 	}
 }
 void discardState(Player *X, Game *G)
@@ -522,7 +523,7 @@ void playState(Player *X, Game *G)
 			case 3:
 				if (X->hlt < X->hltLv)
 					DISCARD(&X->Hnd, i, &G->Dscd),
-				PEACH(X, G);
+						PEACH(X, G);
 				break;
 
 			case 4:
@@ -533,7 +534,7 @@ void playState(Player *X, Game *G)
 				{
 					if (OPP(X, Now))
 						DISCARD(&X->Hnd, i, &G->Dscd),
-					DUEL(X, Now, G);
+							DUEL(X, Now, G);
 					break;
 				}
 				break;
@@ -647,8 +648,14 @@ void playState(Player *X, Game *G)
 			}
 		}
 		printGame(X, G);
+#ifdef _WIN32
 		system("pause");
 		system("cls");
+#endif
+#ifdef __APPLE__
+		PAUSE;
+		system("clear");
+#endif
 	}
 	else
 	{
@@ -656,6 +663,8 @@ void playState(Player *X, Game *G)
 		{
 			CLS;
 			printGame(X, G);
+			printf("Your Hand Deck");
+			_pD(&X->Hnd, G);
 			puts("Commence Your Performance");
 			puts("Card Number(0 to n-1)");
 			scanf("%d", &x);
@@ -666,7 +675,6 @@ void playState(Player *X, Game *G)
 				Reveal(X, G);
 				continue;
 			}
-
 			Player *Target;
 			switch (X->Hnd.a[x].type)
 			{
@@ -789,7 +797,7 @@ void playState(Player *X, Game *G)
 					printf("%d MAKES %d STARVE\n", X->Nb, Target->Nb);
 					DISCARD(&X->Hnd, x, &Target->Ftz);
 				}
-                break;
+				break;
 			case 17:
 				printf("%d EQUIPPED BINOCULARS\n", X->Nb);
 				if (_ASK(&X->Eqp, 17))

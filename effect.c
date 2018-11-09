@@ -114,11 +114,11 @@ void DISMANTLE(Player *X, Player *Y, Game *G)
 	{
 		int f;
 		MSG(&G->IF, "DISMANTLE which (0 to n-1)\n");
-		f=rdn();
+		f = rdn();
 		while (f < 0 && Y->Hnd.n <= f)
 		{
-			MSG(&G->IF,"AGAIN\n");
-			f=rdn();
+			MSG(&G->IF, "AGAIN\n");
+			f = rdn();
 		}
 		DISCARD(&Y->Hnd, f, &G->Dscd);
 	}
@@ -136,11 +136,11 @@ void _SNATCH(Player *X, Deck *Y, Game *G)
 		int f;
 		_pD(Y, G);
 		MSG(&G->IF, "GET which:\n");
-		f=rdn();
+		f = rdn();
 		while (f < 0 && Y->n <= f)
 		{
-			MSG(&G->IF,"AGAIN\n");
-			f=rdn();
+			MSG(&G->IF, "AGAIN\n");
+			f = rdn();
 		}
 		DISCARD(Y, f, &X->Hnd);
 	}
@@ -156,11 +156,11 @@ void SNATCH(Player *X, Player *Y, Game *G)
 	{
 		int f;
 		MSG(&G->IF, "SNATCH which:\n");
-		f=rdn();
+		f = rdn();
 		while (f < 0 && Y->Hnd.n <= f)
 		{
-			MSG(&G->IF,"AGAIN\n");
-			f=rdn();
+			MSG(&G->IF, "AGAIN\n");
+			f = rdn();
 		}
 		DISCARD(&Y->Hnd, f, &X->Hnd);
 	}
@@ -270,21 +270,21 @@ int BORROWEDSWORD(Player *Y, Game *G)
 		if (_ASK(&Y->Hnd, 1))
 		{
 			int x, z;
-			MSG(&G->IF,"Player %d choose a strike or GG\n",Y->Nb);
-			x=rdn();
+			MSG(&G->IF, "Player %d choose a strike or GG\n", Y->Nb);
+			x = rdn();
 			if (Y->Hnd.a[x].type != 1)
-				return MSG(&G->IF,"GG\n"),0;
-			z=rdn();
+				return MSG(&G->IF, "GG\n"), 0;
+			z = rdn();
 			Player *Target = getFromNb(Y, z);
 			if (Target == NULL)
 			{
-				MSG(&G->IF,"Can't Find!\n");
+				MSG(&G->IF, "Can't Find!\n");
 				return 0;
 			}
-			if(calcDist(Y, Target)<=1)
-				DISCARD(&Y->Hnd, x, &G->Dscd),STRIKE(Y, Target, G);
+			if (calcDist(Y, Target) <= 1)
+				DISCARD(&Y->Hnd, x, &G->Dscd), STRIKE(Y, Target, G);
 			else
-				MSG(&G->IF,"Can't reach,GG!\n");
+				MSG(&G->IF, "Can't reach,GG!\n");
 			return 1;
 		}
 		else
