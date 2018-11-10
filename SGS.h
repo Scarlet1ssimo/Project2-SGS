@@ -85,6 +85,7 @@ int calcDist(Player *X, Player *Y);
 int Terminal(Player *X, Game *G);
 int rd(int L, int R);
 int min(int a, int b);
+int max(int a, int b);
 #ifdef linux
 int rdn();
 #endif

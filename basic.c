@@ -1,5 +1,16 @@
 #include "SGS.h"
-
+int calcDist(Player *X, Player *Y)
+{
+	if (X->Nb == Y->Nb)
+		return 0;
+	int d1 = 0, d2 = 0;
+	for (Player *Now = X; Now->Nb != Y->Nb; Now = Now->Nxt)
+		d1++;
+	for (Player *Now = Y; Now->Nb != X->Nb; Now = Now->Nxt)
+		d2++;
+	return max(1, min(d1, d2) - _ASK(&X->Eqp, 17) - _ASK(&X->Eqp, 18) * 2 + _ASK(&Y->Eqp, 19));
+}
+int max(int a, int b) { return a > b ? a : b; }
 #ifdef linux
 void DRAW(Deck *D, Deck *G, Deck *GG)
 {
@@ -74,17 +85,6 @@ int __ASK(Deck *D, int y)
 		if (D->a[i].type == y)
 			return i;
 	return -1;
-}
-int calcDist(Player *X, Player *Y)
-{
-	if (X->Nb == Y->Nb)
-		return 0;
-	int d1 = 0, d2 = 0;
-	for (Player *Now = X; Now->Nb != Y->Nb; Now = Now->Nxt)
-		d1++;
-	for (Player *Now = Y; Now->Nb != X->Nb; Now = Now->Nxt)
-		d2++;
-	return min(1, min(d1, d2) - _ASK(&X->Eqp, 17) - _ASK(&X->Eqp, 18) * 2 + _ASK(&Y->Eqp, 19));
 }
 void WIN(Player *X, Game *G)
 {
@@ -203,17 +203,6 @@ int __ASK(Deck *D, int y)
 		if (D->a[i].type == y)
 			return i;
 	return -1;
-}
-int calcDist(Player *X, Player *Y)
-{
-	if (X->Nb == Y->Nb)
-		return 0;
-	int d1 = 0, d2 = 0;
-	for (Player *Now = X; Now->Nb != Y->Nb; Now = Now->Nxt)
-		d1++;
-	for (Player *Now = Y; Now->Nb != X->Nb; Now = Now->Nxt)
-		d2++;
-	return min(1, min(d1, d2) - _ASK(&X->Eqp, 17) - _ASK(&X->Eqp, 18) * 2 + _ASK(&Y->Eqp, 19));
 }
 void WIN(Player *X, Game *G)
 {

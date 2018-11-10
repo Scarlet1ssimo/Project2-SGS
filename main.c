@@ -9,10 +9,10 @@ int main(int argc, char **argv)
 	cbreak();
 #endif
 
-	freopen("err.log", "w", stderr);
+//	freopen("err.log", "w", stderr);
 	long _233 = time(NULL);
-	fprintf(stderr, "srand: %ld\n", _233);
-	fclose(stderr);
+//	fprintf(stderr, "srand: %ld\n", _233);
+//	fclose(stderr);
 	srand(_233);
 	int n = rd(5, PLAYERS_NUMBER);
 	Game *G = initGame(n, argc, argv[2]);
@@ -228,12 +228,13 @@ void playState(Player *X, Game *G)
 		MSG(&G->IF, "Card Number(0 to n-1)\n");
 		MSG(&G->IF, "R to Reveal\n");
 		MSG(&G->IF, "G to Break\n");
-		MSG(&G->GM, "Your Hand Deck");
-		printDeck(&X->Hnd, G);
+
 		for (int x, y, z, cnt = 0; !Terminal(X, G);)
 		{
 			cP(&G->GM);
 			printGame(X, G);
+			MSG(&G->GM, "Your Hand Deck");
+			printDeck(&X->Hnd, G);
 			SHOW(&G->IF), SHOW(&G->GM);
 			//			move(LINES,0);
 			char ch = getch();
