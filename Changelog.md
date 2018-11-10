@@ -59,3 +59,9 @@ Improved UI for Linux without input.
 11.9
 
 Merge the Linux and Windows
+
+## 1.4.2
+
+11.10
+
+Improved UI for Linux with input.

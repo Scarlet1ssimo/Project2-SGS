@@ -55,7 +55,7 @@ int ASK(Player *X, int y,Game *G)
 				if (y == 1)
 					MSG(&G->GM,"Use a STRIKE?\n");
 				printPlayer(X,G);
-				scanf("%d", &opt);
+				opt=rdn();
 				return opt;
 			}
 		}
@@ -120,9 +120,15 @@ int rd(int L, int R)
 {
 	return rand() % (R - L + 1) + L;
 }
+int rdn()
+{
+	char ch=getch();
+	if(ch<'0'||'9'<ch)return -1;
+	return ch-'0';
+}
 int min(int a, int b) { return a < b ? a : b; }
 #endif
-#ifdef _WIN32
+#ifndef linux
 void DRAW(Deck *D, Deck *G, Deck *GG)
 {
 	if (!G->n)

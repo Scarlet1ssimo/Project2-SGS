@@ -10,12 +10,12 @@
 #define MAXL 80
 #define DEBUG 1
 #define TRAINING
-#define HUMAN 2
+#define HUMAN 1
 #define _FILE 0
 #define JB 80
 #define forP(P) for (Player *Now = P->Nxt; Now->Nb != P->Nb; Now = Now->Nxt)
 #define CLS system("cls")
-#define PLAYERS_NUMBER 7
+#define PLAYERS_NUMBER 10
 
 typedef struct _Card
 {
@@ -84,6 +84,9 @@ int calcDist(Player *X, Player *Y);
 int Terminal(Player *X, Game *G);
 int rd(int L, int R);
 int min(int a, int b);
+#ifdef linux
+int rdn();
+#endif
 
 //effects
 void Reveal(Player *X, Game *G);

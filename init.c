@@ -40,9 +40,13 @@ void initPlayer(Player *P, int i, Game *G)
 {
 	P->Nb = i;
 #ifdef DEMO
-	P->Bot = 0;
+	P->Bot = 1;
 #else
+#ifdef SINGLE
 	P->Bot = i == HUMAN ? 0 : 1;
+#else
+    P->Bot=0;
+#endif
 #endif
 	P->hltLv = rd(3, 5);
 	P->hlt = P->hltLv;

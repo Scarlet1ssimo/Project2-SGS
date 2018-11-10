@@ -9,6 +9,7 @@ int MSG(Panel *P,const char *fmt, ...)
     printed = vsprintf(buf, fmt, args);
     va_end(args);
     _MESSAGE(P,buf);
+    SHOW(P);
     return printed;
 }
 void _MESSAGE(Panel *P,char S[])
@@ -123,7 +124,7 @@ void printGame(Player *X,Game *G)
 	refresh();
 }
 #endif
-#ifdef _WIN32
+#ifndef linux
 void _pD(Deck *D, Game *G)
 {
 	G->n = G->n;
