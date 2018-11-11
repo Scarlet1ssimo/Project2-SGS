@@ -142,6 +142,8 @@ void createDeck(Deck *D, int argc, char *file)
 				D->a[i] = (Card){rd(1, 13), rd(1, 4), 18};
 			if (!strcmp(S, "Horse"))
 				D->a[i] = (Card){rd(1, 13), rd(1, 4), 19};
+			if (!strcmp(S, "EaseForFatigue"))
+				D->a[i] = (Card){rd(1, 13), rd(1, 4), 20};
 		}
 		D->n += num;
 	}

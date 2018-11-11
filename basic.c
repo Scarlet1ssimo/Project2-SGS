@@ -179,6 +179,8 @@ int ASK(Player *X, int y, Game *G)
 			else
 			{
 				int opt;
+				if (y == 3)
+					printf("Use a PEACH?\n");
 				if (y == 2)
 					printf("Use a DODGE?\n");
 				if (y == 1)
@@ -240,4 +242,18 @@ int rd(int L, int R)
 	return rand() % (R - L + 1) + L;
 }
 int min(int a, int b) { return a < b ? a : b; }
+void _dscd(Player *X, Game *G)
+{
+	if (X->Bot)
+		DISCARD(&X->Hnd, rd(0, X->Hnd.n - 1), &G->Dscd);
+	else
+	{
+		printf("DISCARD:\n");
+		int z;
+		scanf("%d", &z);
+		while (0 > z || z >= X->Hnd.n)
+			scanf("%d", &z);
+		DISCARD(&X->Hnd, z, &G->Dscd);
+	}
+}
 #endif

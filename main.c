@@ -9,10 +9,10 @@ int main(int argc, char **argv)
 	cbreak();
 #endif
 
-//	freopen("err.log", "w", stderr);
+	freopen("err.log", "w", stderr);
 	long _233 = time(NULL);
-//	fprintf(stderr, "srand: %ld\n", _233);
-//	fclose(stderr);
+	fprintf(stderr, "srand: %ld\n", _233);
+	fclose(stderr);
 	srand(_233);
 	int n = rd(5, PLAYERS_NUMBER);
 	Game *G = initGame(n, argc, argv[2]);
@@ -646,6 +646,13 @@ void playState(Player *X, Game *G)
 				else
 					DISCARD(&X->Hnd, i, &X->Eqp);
 				break;
+			case 20:
+				DISCARD(&X->Hnd, i, &G->Dscd);
+				printf("%d EASE FOR FATIGUE\n", X->Nb);
+				EASEFORFATIGUE(X, G);
+				forP(X) if (!OPP(X, Now))
+					EASEFORFATIGUE(Now, G);
+				break;
 			}
 		}
 		printGame(X, G);
@@ -820,7 +827,12 @@ void playState(Player *X, Game *G)
 				else
 					DISCARD(&X->Hnd, x, &X->Eqp);
 				break;
-
+			case 20:
+				printf("%d EASE FOR FATIGUE\n", X->Nb);
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				EASEFORFATIGUE(X, G);
+				forP(X) if (!OPP(X, Now))
+					EASEFORFATIGUE(Now, G);
 				break;
 			}
 		}
@@ -829,7 +841,7 @@ void playState(Player *X, Game *G)
 void discardState(Player *X, Game *G)
 {
 	while (X->Hnd.n > X->hlt)
-		DISCARD(&X->Hnd, rd(0, X->Hnd.n - 1), &G->Dscd);
+		_dscd(X, G);
 }
 void Perform(Game *G, Player *Head)
 {

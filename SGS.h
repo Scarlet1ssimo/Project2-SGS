@@ -86,8 +86,10 @@ int Terminal(Player *X, Game *G);
 int rd(int L, int R);
 int min(int a, int b);
 int max(int a, int b);
+void _dscd(Player *X, Game *G);
+
 #ifdef linux
-int rdn();
+	int rdn();
 #endif
 
 //effects
@@ -109,6 +111,7 @@ void FATE_STARVATION(Player *X, Game *G, int i);
 void ARROWBARRAGE(Player *X, Game *G);
 void INVASION(Player *X, Game *G);
 void HARVEST(Player *X, Game *G);
+void EASEFORFATIGUE(Player *Y, Game *G);
 int BORROWEDSWORD(Player *Y, Game *G);
 
 //initialize
@@ -162,4 +165,6 @@ Starvation				16
 Binoculars				17
 Bow						18
 Horse					19
+
+Ease for fatigue		20
 */

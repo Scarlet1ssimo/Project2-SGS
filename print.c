@@ -42,7 +42,7 @@ void SHOW(Panel *P)
 void _pD(Deck *D, Game *G)
 {
 	MSG(&G->IF, "%d: ", D->n);
-	char Nm[][20] = {
+	char Nm[][25] = {
 		"NULL",
 		"Strike",
 		"Dodge",
@@ -62,7 +62,8 @@ void _pD(Deck *D, Game *G)
 		"Starvation",
 		"Binoculars",
 		"Bow",
-		"Horse"};
+		"Horse",
+		"Ease"};
 	for (int i = 0; i < D->n; i++)
 		MSG(&G->IF, "%d%s ", i, Nm[D->a[i].type]);
 	MSG(&G->IF, "\n");
@@ -91,7 +92,8 @@ void printDeck(Deck *D, Game *G)
 		"Starvation",
 		"Binoculars",
 		"Bow",
-		"Horse"};
+		"Horse",
+		"Ease"};
 	for (int i = 0; i < D->n; i++)
 		MSG(&G->GM, "%d%s ", i, Nm[D->a[i].type]);
 	MSG(&G->GM, "\n");
@@ -144,7 +146,7 @@ void printGame(Player *X, Game *G)
 		{
 			G->n = G->n;
 			printf("%d: ", D->n);
-			char Nm[][20] = {
+			char Nm[][25] = {
 				"NULL",
 				"Strike",
 				"Dodge",
@@ -164,7 +166,8 @@ void printGame(Player *X, Game *G)
 				"Starvation",
 				"Binoculars",
 				"Bow",
-				"Horse"};
+				"Horse",
+				"Ease"};
 			for (int i = 0; i < D->n; i++)
 				printf("%d%s ", i, Nm[D->a[i].type]);
 			puts("");
@@ -193,7 +196,8 @@ void printGame(Player *X, Game *G)
 				"Starvation",
 				"Binoculars",
 				"Bow",
-				"Horse"};
+				"Horse",
+				"Ease"};
 			for (int i = 0; i < D->n; i++)
 				printf("%d%s ", i, Nm[D->a[i].type]);
 			puts("");

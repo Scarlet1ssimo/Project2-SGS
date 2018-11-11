@@ -323,7 +323,7 @@ int HELP(Player *Y, Game *G)
 		}
 		else
 		{
-			if (ASK(Now, 2, G))
+			if (ASK(Now, 3, G))
 				return USE(&Now->Hnd, 2, &G->Dscd), 1;
 		}
 	}
@@ -530,6 +530,14 @@ void HARVEST(Player *X, Game *G)
 	forP(X)
 		_SNATCH(Now, &BTF, G);
 }
+void EASEFORFATIGUE(Player *Y, Game *G)
+{
+	printf("%d EASED\n", Y->Nb);
+	DRAW(&Y->Hnd, &G->Main, &G->Dscd);
+	DRAW(&Y->Hnd, &G->Main, &G->Dscd);
+	_dscd(Y, G);
+	_dscd(Y, G);
+}
 int BORROWEDSWORD(Player *Y, Game *G)
 {
 	if (Y->Bot)
@@ -571,4 +579,5 @@ int BORROWEDSWORD(Player *Y, Game *G)
 			return 0;
 	}
 }
+
 #endif
