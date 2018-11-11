@@ -72,7 +72,7 @@ void _pD(Deck *D, Game *G)
 void printDeck(Deck *D, Game *G)
 {
 	MSG(&G->GM, "%d: ", D->n);
-	char Nm[][20] = {
+	char Nm[][25] = {
 		"NULL",
 		"Strike",
 		"Dodge",
@@ -176,7 +176,7 @@ void printGame(Player *X, Game *G)
 		{
 			G->n = G->n;
 			printf("%d: ", D->n);
-			char Nm[][20] = {
+			char Nm[][25] = {
 				"NULL",
 				"Strike",
 				"Dodge",

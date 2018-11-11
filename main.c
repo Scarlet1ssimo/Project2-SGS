@@ -8,12 +8,10 @@ int main(int argc, char **argv)
 	noecho();
 	cbreak();
 #endif
-
-	freopen("err.log", "w", stderr);
 	long _233 = time(NULL);
-	fprintf(stderr, "srand: %ld\n", _233);
-	fclose(stderr);
 	srand(_233);
+	freopen("err.log", "w", stderr);fprintf(stderr, "srand: %ld\n", _233);fclose(stderr);
+
 	int n = rd(5, PLAYERS_NUMBER);
 	Game *G = initGame(n, argc, argv[2]);
 	Player *Head = initPlayers(n, G);
@@ -212,6 +210,13 @@ void playState(Player *X, Game *G)
 				else
 					DISCARD(&X->Hnd, i, &X->Eqp);
 				break;
+			case 20:
+				DISCARD(&X->Hnd, i, &G->Dscd);
+				MSG(&G->IF, "%d EASE FOR FATIGUE\n", X->Nb);
+				EASEFORFATIGUE(X, G);
+				forP(X) if (!OPP(X, Now))
+					EASEFORFATIGUE(Now, G);
+				break;
 			}
 		}
 		printGame(X, G);
@@ -300,6 +305,7 @@ void playState(Player *X, Game *G)
 					MSG(&G->IF, "Not a STRIKE!\n");
 					break;
 				}
+				MSG(&G->IF, "then choose a Target\n");
 				z = rdn();
 				Target = getFromNb(X, z);
 				if (Target == NULL)
@@ -447,7 +453,12 @@ void playState(Player *X, Game *G)
 				else
 					DISCARD(&X->Hnd, x, &X->Eqp);
 				break;
-
+			case 20:
+				DISCARD(&X->Hnd, x, &G->Dscd);
+				MSG(&G->IF, "%d EASE FOR FATIGUE\n", X->Nb);
+				EASEFORFATIGUE(X, G);
+				forP(X) if (!OPP(X, Now))
+					EASEFORFATIGUE(Now, G);
 				break;
 			}
 		}

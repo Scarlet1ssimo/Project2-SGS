@@ -61,6 +61,8 @@ int ASK(Player *X, int y, Game *G)
 			else
 			{
 				int opt;
+				if (y == 3)
+					MSG(&G->GM, "Use a PEACH?\n");
 				if (y == 2)
 					MSG(&G->GM, "Use a DODGE?\n");
 				if (y == 1)
@@ -126,6 +128,25 @@ int rdn()
 	if (ch < '0' || '9' < ch)
 		return -1;
 	return ch - '0';
+}
+void _dscd(Player *X, Game *G)
+{
+	if (X->Bot)
+		DISCARD(&X->Hnd, rd(0, X->Hnd.n - 1), &G->Dscd);
+	else
+	{
+		MSG(&G->IF, "DISCARD:\n");
+		cP(&G->GM);
+		printGame(X, G);
+		MSG(&G->GM, "Your Hand Deck");
+		printDeck(&X->Hnd, G);
+		SHOW(&G->IF), SHOW(&G->GM);
+		int z;
+		z=rdn();
+		while (0 > z || z >= X->Hnd.n)
+			z=rdn();
+		DISCARD(&X->Hnd, z, &G->Dscd);
+	}
 }
 int min(int a, int b) { return a < b ? a : b; }
 #endif
