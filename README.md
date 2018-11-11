@@ -4,7 +4,12 @@
 
 A simple and naive version of SanGuoSha in CLI.
 
-With the bonus: implement a stack to handle the decks.
+With the bonus
+
+- implement a stack to handle the decks.
+
+- Add card "Ease for Fatigue"(以逸待劳)
+	- Make Everyone in the same country draw and discard 2 cards, respectively.
 
 There are 3 modes in this GAME:
 

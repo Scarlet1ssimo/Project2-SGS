@@ -71,3 +71,9 @@ Improved UI for Linux with input.
 11.10
 
 Tried to adapt to macos
+
+## 1.5.0
+
+11.11
+
+Add "EASE for FATIGUE" for windows.
